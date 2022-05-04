@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>HIIT Training</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="shortcut icon" href="#" />
+</head>
+
+<body>
+    <header class="cabecera">
+        <h1> HIIT TRAINING</h1>
+    </header>
+    <div id="app">
+        <audio id="silbato">
+            <source src="silbato.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="campana">
+            <source src="campana.mp3" type="audio/mpeg">
+        </audio>
+
+
+        <div class="panel-boton contenedor">
+
+            <div id="panel-seleccion" class="contenedorFlex" v-if="!practicando">
+                <div class="item">
+                    <h1>CONFIGURE SU ENTRENAMIENTO</h1>
+                </div>
+
+                <div class="item contenedorGrid">
+                    <label for="num_ejercicios"> Numero de ejercicios</label>
+                    <select name="num_ejercicios" v-model="num_ejercicios">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                        <option value="10">10</option>
+                    </select>
+
+
+                    <label for="num_series"> Numero de series</label>
+                    <select name="num_series" v-model="num_series">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+
+                </div>
+
+
+                <div class="item contenedorGrid">
+                    <label for="tiempo_ejercicio"> Duracion ejercicio</label>
+                    <div>
+                        <select name="tiempo_ejercicio" v-model="tiempo_ejercicio">
+                            <option value="2">2</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                            <option value="45">45</option>
+                            <option value="60">60</option>
+                        </select>
+                        <span> s</span>
+                    </div>
+           
+                    <label for="tiempo_pausa"> Duracion pausa</label>
+                    <div>
+                        <select name="tiempo_pausa" v-model="tiempo_pausa">
+                            <option value="2">2</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                        </select>
+                        <span> s</span>
+                    </div>
+                    Duración total: {{duracionTotal}}min
+                </div>
+                
+            </div>
+
+            <div class="contenedorFlex">
+                <img class="botoncito item" id="comenzar" @click="comenzar()" src="./img/play.png" alt=""
+                    v-if="!practicando">
+                <img class="botoncito item" id="parar" @click="parar()" src="./img/pause.png" alt="" v-else>
+
+            </div>
+
+            <div class="item contenedorFlex" v-if="practicando">
+                <p> EJERCICIO: {{current_ejercicio}} / {{num_ejercicios}}</p>
+                <p> SERIE: {{current_serie}} / {{num_series}} </p>
+                <p> COMPLETADO: {{porcentajeCompletado}}% </p>
+
+            </div>
+
+            <div id="flip-container" v-if="practicando">
+                <div class="ficha" v-bind:class="{rotated: !caraA}" class="card">
+                    <div class="front">
+                        {{ficha.palabra1}}
+                    </div>
+                    <div class="back">
+                        {{ficha.palabra2}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contenedorFlex" v-if="!practicando">
+            <span>Sonido</span>
+            <select name="sonido" id="sonido" v-model="sonido">
+                <option value="silbato">Silbato</option>
+                <option value="campana">Campana</option>
+            </select>
+
+            <button class="item" @click="pita()">Prueba Sonido</button>
+        </div>
+    </div>
+
+
+    <footer class="footer">Adrian de Haro Ortega. <span class="copyleft"> &copy; </span> HIIT TRAINING 2020 · Todos
+        los derechos reservados</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                id: null,
+                id2: null,
+                id3: null,
+                id4: null,
+                num_ejercicios: 8,
+                num_series: 4,
+                current_ejercicio: null,
+                current_serie: null,
+                sonido: "silbato",
+                practicando: false,
+                caraA: true,
+                tiempo_ejercicio: 20,
+                tiempo_pausa: 10,
+                ficha: { palabra1: 'Start??', palabra2: 'Descansa' },
+            },
+            mounted: function () {
+
+            },
+            computed: {
+                tiempoms_ejercicio: function () {
+                    return this.tiempo_ejercicio * 1000;
+                },
+                tiempoms_pausa: function () {
+                    return this.tiempo_pausa * 1000 + 1000; //Le añado un segundo, para añadir el tiempo del sonido del silbato. Para duraciones cortas de descanso se nota.
+                },
+                tiempoms_total: function () {
+                    return (this.tiempoms_ejercicio + this.tiempoms_pausa);
+                },
+                porcentajeCompletado: function () {
+                    return (this.current_ejercicio * this.current_serie / (this.num_ejercicios * this.num_series) * 100).toFixed(2);
+                },
+                duracionTotal: function(){
+                    return (parseInt(this.num_ejercicios)*parseInt(this.num_series)*(parseInt( this.tiempo_ejercicio)+ parseInt(this.tiempo_pausa))/60).toFixed(2);
+                }
+            },
+            methods: {
+                rota: function () {
+                    app.caraA = !app.caraA;
+
+                },
+                comenzar: function () {
+                    app.practicando = true;
+                    this.current_ejercicio = 1;
+                    this.current_serie = 0;
+                    this.ficha.palabra1 = "Guerrea";
+                    app.unaSerie();
+                    app.id = setInterval(function () {
+                        app.unaSerie()
+                    }, app.tiempoms_total) //app.funcion() ha de llevar los PARENTESIS!!!
+                },
+                parar: function () {
+                    this.current_ejercicio = null;
+                    this.current_serie = null;
+                    clearInterval(app.id);
+                    clearInterval(app.id2);
+                    clearInterval(app.id3);
+                    clearInterval(app.id4);
+                    app.practicando = false;
+                    this.ficha.palabra1 = "Start??";
+                    alert("Finaliza el ejercicio");
+                },
+                unaSerie: function () {
+                    if (app.practicando) {
+                        app.pita();
+                        this.actualizarCuenta();
+                        app.id2 = setTimeout(function () { app.rota() }, app.tiempoms_ejercicio);
+                        app.id3 = setTimeout(function () { app.pita() }, app.tiempoms_ejercicio);
+                        app.id4 = setTimeout(function () { app.rota() }, app.tiempoms_total);
+                    }
+                },
+                actualizarCuenta: function () {
+                    if (this.current_serie < this.num_series)
+                        this.current_serie++;
+                    else {
+                        this.current_serie = 1;
+                        this.current_ejercicio++;
+                    }
+                    if (this.current_ejercicio > this.num_ejercicios)
+                        this.parar();
+                },
+
+                pita: function () {
+
+                    var silbato = document.getElementById("silbato");
+                    var campana = document.getElementById("campana");
+                    if (this.sonido == "silbato")
+                        silbato.play();
+                    else if (this.sonido == "campana")
+                        campana.play();
+                }
+            }
+        })
+    </script>
+
+
+</body>
+
+</html>
