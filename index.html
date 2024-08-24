@@ -48,6 +48,7 @@
                         <option value="3">3</option>
                         <option value="4">4</option>
                         <option value="5">5</option>
+                        <option value="10">10</option>
                     </select>
 
                 </div>
@@ -57,12 +58,14 @@
                     <label for="tiempo_ejercicio"> Duracion ejercicio</label>
                     <div>
                         <select name="tiempo_ejercicio" v-model="tiempo_ejercicio">
-                            <option value="2">2</option>
-                            <option value="20">20</option>
-                            <option value="25">25</option>
-                            <option value="30">30</option>
-                            <option value="45">45</option>
-                            <option value="60">60</option>
+                            <option value="2">2s</option>
+                            <option value="20">20s</option>
+                            <option value="25">25s</option>
+                            <option value="30">30s</option>
+                            <option value="45">45s</option>
+                            <option value="60">60s</option>
+                            <option value="300">5min</option>
+                            <option value="600">10min</option>
                         </select>
                         <span> s</span>
                     </div>
@@ -70,13 +73,16 @@
                     <label for="tiempo_pausa"> Duracion pausa</label>
                     <div>
                         <select name="tiempo_pausa" v-model="tiempo_pausa">
-                            <option value="2">2</option>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="25">25</option>
-                            <option value="30">30</option>
+                            <option value="0">Sin pausa</option>
+                            <option value="2">2s</option>
+                            <option value="5">5s</option>
+                            <option value="10">10s</option>
+                            <option value="15">15s</option>
+                            <option value="20">20s</option>
+                            <option value="25">25s</option>
+                            <option value="30">30s</option>
+                            <option value="60">1min</option>
+                            <option value="90">1min30s</option>
                         </select>
                         <span> s</span>
                     </div>
